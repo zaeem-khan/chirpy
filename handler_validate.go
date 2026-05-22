@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"slices"
 	"strings"
 )
 
@@ -30,18 +29,27 @@ func handlerChirpsValidate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	badWords := map[string]struct{}{
+		"kerfuffle": {},
+		"sharbert":  {},
+		"fornax":    {},
+	}
+	cleaned := profanityCleanup(params.Body, badWords)
+
 	respondWithJSON(w, http.StatusOK, returnVals{
-		CleanedBody: profanityCleanup(params.Body),
+		CleanedBody: cleaned,
 	})
 }
 
-func profanityCleanup(body string) string {
-	badWords := []string{"kerfuffle", "sharbert", "fornax"}
+func profanityCleanup(body string, badWords map[string]struct{}) string {
+
 	words := strings.Split(body, " ")
 	for i, word := range words {
-		if slices.Contains(badWords, strings.ToLower(word)) {
+		lowerWord := strings.ToLower(word)
+		if _, ok := badWords[lowerWord]; ok {
 			words[i] = "****"
 		}
 	}
-	return strings.Join(words, " ")
+	cleaned := strings.Join(words, " ")
+	return cleaned
 }
