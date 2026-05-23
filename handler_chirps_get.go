@@ -6,8 +6,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func (cfg *apiConfig) handlerChripRetrieve(w http.ResponseWriter, r *http.Request) {
-	chirpID, err := uuid.Parse(r.PathValue("chirpId"))
+func (cfg *apiConfig) handlerChripGet(w http.ResponseWriter, r *http.Request) {
+	chirpIDString := r.PathValue("chirpId")
+	chirpID, err := uuid.Parse(chirpIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid chirp ID", err)
 		return
