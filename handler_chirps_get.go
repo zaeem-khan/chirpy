@@ -2,7 +2,32 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/google/uuid"
 )
+
+func (cfg *apiConfig) handlerChripRetrieve(w http.ResponseWriter, r *http.Request) {
+	chirpID, err := uuid.Parse(r.PathValue("chirpId"))
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid chirp ID", err)
+		return
+	}
+
+	dbChrip, err := cfg.db.GetChirpByID(r.Context(), chirpID)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "Couldn't retrieve chirp", err)
+		return
+	}
+
+	chirp := Chirp{
+		ID:        dbChrip.ID,
+		CreatedAt: dbChrip.CreatedAt,
+		UpdatedAt: dbChrip.UpdatedAt,
+		UserID:    dbChrip.UserID,
+		Body:      dbChrip.Body,
+	}
+	respondWithJSON(w, http.StatusOK, chirp)
+}
 
 func (cfg *apiConfig) handlerChirpsRetrieve(w http.ResponseWriter, r *http.Request) {
 
