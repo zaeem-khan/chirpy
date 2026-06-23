@@ -1,4 +1,4 @@
--- name: GetChirpByID :one
+-- name: GetChirp :one
 SELECT * FROM chirps
 WHERE id = $1;
 
@@ -16,3 +16,7 @@ VALUES (
     $2
 )
 RETURNING *;
+
+-- name: DeleteChirp :exec
+DELETE FROM chirps
+WHERE id = $1;

@@ -14,7 +14,7 @@ func (cfg *apiConfig) handlerChripGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbChrip, err := cfg.db.GetChirpByID(r.Context(), chirpID)
+	dbChrip, err := cfg.db.GetChirp(r.Context(), chirpID)
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "Couldn't retrieve chirp", err)
 		return
